@@ -1,0 +1,84 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-sidebar-style.html">
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM -->
+<!-- https://www.polymer-project.org/2.0/docs/devguide/feature-overview -->
+
+<!--THE WEB COMPONENT SHADOWROOT -->
+<dom-module id="novicell-sidebar-user">
+    <template>
+        <!-- THE WEB COMPONENT STYLES AND INCLUDED STYLE-->
+        <style include="sidebar-style">
+             :host {
+                display: block;
+            }
+
+            #novicellSidebarUser {
+                margin-bottom: 10px;
+                display: flex;
+                font-size: 0.7em;
+            }
+
+            img {
+                width: 50px;
+                border: 1px solid #C6B43A;
+            }
+
+            .sidebar-user-name {
+                margin-left: 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+
+            .sidebar-user-loggedin {
+                margin-bottom: 5px;
+            }
+        </style>
+
+        <!-- THE WEB COMPONENT HTML -->
+        <div id="novicellSidebarUser" class="novicell-sidebar-user">
+            <div><img src$="[[importPath]]images/face.png"></div>
+            <div class="sidebar-user-name">
+                <div class="sidebar-user-loggedin color-primary-1">Logget ind som:</div>
+                <div class="sidebar-default-text-color color-primary-1"><slot></slot></div>   
+            </div>
+            
+        </div>
+    </template>
+
+    <!-- THE WEB COMPONENT JAVSCRIPT -->
+    <script>
+        class NovicellSidebarUser extends Polymer.Element {
+            static get is() {
+                return 'novicell-sidebar-user';
+            }
+            static get properties() {
+                return {
+                    showLoginText: {
+                        type: String,
+                        value: "false",
+                        reflectToAttribute: true,
+                        observer: "_showHideLoggedInText"
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            // Private method
+            _showHideLoggedInText(newValue) {
+                const text = this.$.novicellSidebarUser.querySelector(".sidebar-user-loggedin");
+                if (newValue === "true") {
+                    text.style.display = "block";
+                } else {
+                    text.style.display = "none";
+                }
+            }
+        }
+
+        window.customElements.define(NovicellSidebarUser.is, NovicellSidebarUser);
+    </script>
+</dom-module>

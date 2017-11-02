@@ -1,0 +1,51 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-sidebar-style.html">
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM -->
+<!-- https://www.polymer-project.org/2.0/docs/devguide/feature-overview -->
+
+<!--THE WEB COMPONENT SHADOWROOT -->
+<dom-module id="novicell-sidebar-footer">
+  <template>
+    <!-- THE WEB COMPONENT STYLES AND INCLUDED STYLE-->
+    <style include="sidebar-style">
+      :host {
+        display: block;
+      }
+
+      #novicellSidebarFooter {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        font-size: 0.8em;
+      }
+    </style>
+
+    <!-- THE WEB COMPONENT HTML -->
+    <div id="novicellSidebarFooter" class="bgcolor-primary-3 color-primary-2 novicell-sidebar-footer"><slot></slot></div>
+  </template>
+
+  <!-- THE WEB COMPONENT JAVSCRIPT -->
+  <script>
+    class NovicellSidebarFooter extends Polymer.Element {
+      static get is() { return 'novicell-sidebar-footer'; }
+      static get properties() {
+        return {
+          alignText: {
+            type: String,
+            value: "center"
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.$.novicellSidebarFooter.style.textAlign = this.alignText;
+      }
+    }
+
+    window.customElements.define(NovicellSidebarFooter.is, NovicellSidebarFooter);
+  </script>
+</dom-module>

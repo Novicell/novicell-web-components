@@ -1,0 +1,108 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-sidebar-style.html">
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM -->
+<!-- https://www.polymer-project.org/2.0/docs/devguide/feature-overview -->
+
+<!--THE WEB COMPONENT SHADOWROOT -->
+<dom-module id="novicell-sidebar-item">
+  <template>
+    <!-- THE WEB COMPONENT STYLES AND INCLUDED STYLE-->
+    <style include="sidebar-style">
+       :host {
+        display: block;
+      }
+
+      #novicellSidebarItem {
+        font-size: 0.8em;
+      }
+
+      #novicellSidebarItem.sidebar-item-button {
+        padding: 10px 0;
+        cursor: pointer;
+      }
+
+      #novicellSidebarItem.sidebar-item-text {
+        padding: 5px 10px;
+        margin-left: -20px;
+        margin-right: -10px;
+        cursor: default;
+      }
+    </style>
+
+    <!-- THE WEB COMPONENT HTML -->
+    <div id="novicellSidebarItem" class="sidebar-item-button sidebar-default-text-color hover-color-primary-1 novicell-sidebar-item">
+      <slot></slot>
+    </div>
+  </template>
+
+  <!-- THE WEB COMPONENT JAVSCRIPT -->
+  <script>
+    class NovicellSidebarItem extends Polymer.Element {
+      static get is() {
+        return 'novicell-sidebar-item';
+      }
+      static get properties() {
+        return {
+          type: {
+            type: String,
+            value: "button"
+          },
+          id: {
+            type: String,
+            value: ""
+          },
+          data: {
+            type: String,
+            value: ""
+          },
+          link: {
+            type: String,
+            value: ""
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        if (this.type === "text") {
+          this.$.novicellSidebarItem.classList.remove("sidebar-item-button");
+          this.$.novicellSidebarItem.classList.remove("sidebar-default-text-color");
+          this.$.novicellSidebarItem.classList.remove("hover-color-primary-1");
+          this.$.novicellSidebarItem.classList.add("sidebar-item-text");
+          this.$.novicellSidebarItem.classList.add("bgcolor-primary-3");
+          this.$.novicellSidebarItem.classList.add("color-primary-2");
+        } else {
+          this.$.novicellSidebarItem.addEventListener("click", this._sendClickEvent.bind(this));
+        }
+      }
+
+      // Private method
+      _sendClickEvent() {
+        let details = this._getEventData();
+        this.dispatchEvent(new CustomEvent("sidebar-item-clicked", {
+          detail: details
+        }));
+      }
+
+      // Private method
+      _getEventData() {
+        let data = {};
+
+        if (this.data) {
+          data = JSON.parse(this.data);
+        }
+
+        let details = {
+          id: this.id,
+          data: data,
+          link: this.link
+        };
+
+        return details;
+      }
+    }
+
+    window.customElements.define(NovicellSidebarItem.is, NovicellSidebarItem);
+  </script>
+</dom-module>

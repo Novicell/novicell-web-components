@@ -1,0 +1,187 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-sidebar-style.html">
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM -->
+<!-- https://www.polymer-project.org/2.0/docs/devguide/feature-overview -->
+
+<!--THE WEB COMPONENT SHADOWROOT -->
+<dom-module id="novicell-sidebar-menu">
+    <template>
+        <!-- THE WEB COMPONENT STYLES AND INCLUDED STYLE-->
+        <style include="sidebar-style">
+            @keyframes slideIn {
+                0% {
+                    transform: translateY(-70px);
+                }
+                50% {
+                    transform: translateY(0);
+                    opacity: 0.8;
+                }
+                70% {
+                    transform: translateY(0);
+                    opacity: 0.3;
+                }
+                90% {
+                    transform: translateY(0);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 0.3;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateY(0)
+                }
+                to {
+                    transform: translateY(-70px)
+                }
+            }
+
+            .show-animation-slide-in {
+                animation: slideIn 500ms ease-in 0s 1 forwards;
+            }
+
+            .show-animation-slide-out {
+                animation: slideOut 250ms ease-out 0s 1 forwards;
+            }
+
+             :host {
+                display: block;
+            }
+
+            #novicellSidebarMenu {
+                width: 60px;
+                height: 40px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                box-sizing: border-box;
+                opacity: 0.3;
+                transition: opacity 500ms;
+            }
+
+            @media only screen and (min-device-width: 320px) and (max-device-width: 1366px) {
+                #novicellSidebarMenu {
+                    opacity: 1;
+                }
+            }
+
+            #novicellSidebarMenu:hover {
+                opacity: 1;
+            }
+
+            .sidebar-menu-outer-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            .sidebar-menu-container {
+                width: 30px;
+                cursor: pointer;
+            }
+
+            .sidebar-menu {
+                padding: 2px 0;
+                margin-bottom: 3px;
+                border-radius: 8px;
+                ;
+            }
+
+            .sidebar-menu:last-child {
+                margin-bottom: 0;
+            }
+        </style>
+
+        <!-- THE WEB COMPONENT HTML -->
+        <div id="novicellSidebarMenu" class="bgcolor-primary-0 novicell-sidebar-menu">
+            <div class="sidebar-menu-outer-container">
+                <div class="sidebar-menu-container">
+                    <div class="sidebar-menu bgcolor-primary-2"></div>
+                    <div class="sidebar-menu bgcolor-primary-2"></div>
+                    <div class="sidebar-menu bgcolor-primary-2"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- THE WEB COMPONENT JAVSCRIPT -->
+    <script>
+        class NovicellSidebarMenu extends Polymer.Element {
+            static get is() {
+                return 'novicell-sidebar-menu';
+            }
+            static get properties() {
+                return {
+                    position: {
+                        type: String,
+                        value: "left",
+                        reflectToAttribute: true,
+                        observer: "_positionMenu"
+                    },
+                    show: {
+                        type: String,
+                        value: "false",
+                        reflectToAttribute: true,
+                        observer: "_showHideMenu",
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+
+                let menu = this.$.novicellSidebarMenu.querySelector(".sidebar-menu-container");
+                menu.addEventListener("click", () => {
+                    this.show = "false";
+                    this.dispatchEvent(new CustomEvent("sidebar-menu-clicked"));
+                });
+
+                this.$.novicellSidebarMenu.addEventListener("animationend", this._animationEnd.bind(this));
+            }
+
+            // Private method
+            _animationEnd() {
+                if (this.$.novicellSidebarMenu.classList.contains("show-animation-slide-out")) {
+                    this.$.novicellSidebarMenu.classList.remove("show-animation-slide-out")
+                } else {
+                    this.$.novicellSidebarMenu.classList.remove("show-animation-slide-in")
+                }
+            }
+
+            // Private method
+            _positionMenu(newValue, oldValue) {
+                if (newValue) {
+                    if (newValue === "left") {
+                        this.$.novicellSidebarMenu.style.right = "auto";
+                        this.$.novicellSidebarMenu.style.left = 0;
+                    } else if (newValue === "right") {
+                        this.$.novicellSidebarMenu.style.left = "auto";
+                        this.$.novicellSidebarMenu.style.right = "0";
+                    }
+                }
+            }
+
+            // Private method
+            _showHideMenu(newValue, oldValue) {
+                if (newValue === "true") {
+                    this.$.novicellSidebarMenu.classList.remove("show-animation-slide-out");
+                    this.$.novicellSidebarMenu.classList.add("show-animation-slide-in");
+                    this.dispatchEvent(new CustomEvent("sidebar-menu-shown"));
+                } else {
+                    this.$.novicellSidebarMenu.classList.remove("show-animation-slide-in");
+                    this.$.novicellSidebarMenu.classList.add("show-animation-slide-out");
+                    this.dispatchEvent(new CustomEvent("sidebar-menu-hidden"));
+                }
+            }
+        }
+
+        window.customElements.define(NovicellSidebarMenu.is, NovicellSidebarMenu);
+    </script>
+</dom-module>
