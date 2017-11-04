@@ -1,0 +1,81 @@
+[
+    {
+        "type": "single",
+        "name": "Menu item 1",
+        "link": "/products/menuitem1"
+    },
+    {
+        "type": "single",
+        "name": "Menu item 2",
+        "link": "/products/menuitem2"
+    },
+    {
+        "type": "single",
+        "name": "Menu item 3",
+        "link": "/products/menuitem3"
+    },
+    {
+        "type": "dropdown",
+        "name": "Menu item 4",
+        "link": "/products/menuitem4",
+        "sub": [
+            {
+                "type": "single",
+                "name": "Sub Menu item 1",
+                "link": "/products/menuitem4/submenuitem1"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 2",
+                "link": "/products/menuitem4/submenuitem2"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 3",
+                "link": "/products/menuitem4/submenuitem3"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 4",
+                "link": "/products/menuitem4/submenuitem4"
+            }
+        ]
+    },
+    {
+        "type": "dropdown",
+        "name": "Menu item 5",
+        "link": "/products/menuitem5",
+        "sub": [
+            {
+                "type": "single",
+                "name": "Sub Menu item 1",
+                "link": "/products/menuitem5/submenuitem1"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 2",
+                "link": "/products/menuitem5/submenuitem2"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 3",
+                "link": "/products/menuitem5/submenuitem3"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 4",
+                "link": "/products/menuitem5/submenuitem4"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 5",
+                "link": "/products/menuitem5/submenuitem5"
+            },
+            {
+                "type": "single",
+                "name": "Sub Menu item 6",
+                "link": "/products/menuitem5/submenuitem6"
+            }
+        ]
+    }
+]

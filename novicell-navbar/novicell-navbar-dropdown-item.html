@@ -1,0 +1,191 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-navbar-styles.html">
+
+<!-- Name og web component <novicell-navbar-dropdown-item link="Link value">Menu Item Name</novicell-navbar-dropdown-item> -->
+<dom-module id="novicell-navbar-dropdown-item">
+    <template>
+        <!-- Styles for novicell-navbar-dropdown-item and includes shared styles from novicell-navbar-styles.html -->
+        <style include="novicell-navbar-styles">
+            /* :host styles web component element <novicell-navbar-dropdown-item></novicell-navbar-dropdown-item> */
+            :host {
+                display: block;
+                height: 100%;
+                align-self: center;
+            }
+
+            i {
+                border: solid var(--navbar-dropdown-icon-color);
+                border-width: 0 2px 2px 0;
+                display: inline-block;
+                padding: 3px;
+            }
+
+            .arrow {
+                margin-left: 8px;
+                margin-bottom: 2px;
+            }
+
+            .down {
+                transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+            }
+
+            .novicell-navbar-item {
+                box-sizing: border-box;
+                display: flex;
+                padding: 10px;
+                height: 100%;
+                width: var(--navbar-menu-item-width);
+                align-items: center;
+                position: relative;
+                top: 0;
+            }
+
+            .novicell-navbar-item a {
+                text-decoration: none;
+                color: var(--navbar-menu-item-color);
+            }
+
+            .novicell-navbar-item:hover a {
+                color: var(--navbar-menu-item-hover-color);
+            }
+
+            .novicell-navbar-item:hover i {
+                border-color: var(--navbar-menu-item-hover-color);
+            }
+
+            .novicell-navbar-item a.active {
+                color: var(--navbar-menu-item-active-color);
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items {
+                position: absolute;
+                top: var(--navbar-height);
+                padding: 20px;  
+                display: none;
+                width: 100%;
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items .novicell-navbar-sub-item {
+                margin-bottom: 20px;
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items .novicell-navbar-sub-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .novicell-navbar-item:hover > .novicell-navbar-dropdown-items {
+                display: block;
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items {
+                background-color: var(--navbar-dropdown-bgcolor);
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items a {
+                color: var(--navbar-dropdown-color);
+            }
+
+            .novicell-navbar-item .novicell-navbar-dropdown-items a:hover {
+                color: var(--navbar-dropdown-hover-color);
+            }
+
+            @media only screen and (max-width: 768px) {
+                :host {
+                    align-self: flex-start;
+                }
+
+                .down {
+                    transform: rotate(-225deg);
+                    -webkit-transform: rotate(-225deg);
+                }   
+
+                .novicell-navbar-item .novicell-navbar-item-link i {
+                    float: left;
+                    margin-top: 5px;
+                    margin-left: -8px;
+                }
+
+                .novicell-navbar-item .novicell-navbar-dropdown-items {
+                    position: absolute;
+                    top: 0; 
+                    left: -140%;
+                    padding: 20px;  
+                    display: none;
+                }
+            }
+        </style>
+
+        <!-- Web component HTML -->
+        <div id="novicellNavbarItem" class="novicell-navbar-item">
+            <div class="novicell-navbar-item-link-outer"><a class="novicell-navbar-item-link" href$="[[link]]"><slot></slot><i class="arrow down"></i></a></div>
+            <div id="novicellNavbarDropdownItems" class="novicell-navbar-dropdown-items"></div>
+        </div>
+    </template>
+
+    <!-- Web component Script -->
+    <script>
+        class NovicellNavbarDropdownItem extends Polymer.Element { // Polymer.Element that the class extends is Polymer helper functions
+            // Polymer setup. Web Component name
+            static get is() { return "novicell-navbar-dropdown-item"; }
+            // Polymer setup. Custom properties on Element = <element my-custom-property="value"></element>
+            // Documentation: https://www.polymer-project.org/2.0/docs/devguide/properties
+            static get properties() {
+                return {
+                    // Link value for element
+                    link: {
+                        type: String,
+                        value: ""
+                    },
+                    // Data for dropdown menu items
+                    data: {
+                        type: Array,
+                        value: function() {
+                            return [];
+                        },
+                        observer: "_dataObserver"
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+
+                this._initEvents();
+            }
+
+            _initEvents() {
+                let aElem = this.$.novicellNavbarItem.querySelector(".novicell-navbar-item-link");
+                aElem.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.dispatchEvent(new CustomEvent("menu-item-click", {detail: {link: this.link}}));
+                })
+            }
+
+            _dataObserver(newValue, oldValue) {
+                if (newValue) {
+                    this._generateDropdownMenuItems(newValue);
+                }
+            }
+
+            _generateDropdownMenuItems(data) {
+                if (data && data.length) {
+                    for (let i = 0; i < data.length; i++) {
+                        let dataItem = data[i];
+                        let divElem = document.createElement("div");
+                        let aElem = document.createElement("a");
+                        aElem.href = dataItem.link;
+                        aElem.innerText = dataItem.name;
+                        divElem.classList.add("novicell-navbar-sub-item");
+                        divElem.appendChild(aElem);
+                        this.$.novicellNavbarDropdownItems.appendChild(divElem);
+                    }
+                }
+            }
+        }
+
+        // Standard Web component initializing. Registration of component as Web-component
+        window.customElements.define(NovicellNavbarDropdownItem.is, NovicellNavbarDropdownItem);
+    </script>
+</dom-module>

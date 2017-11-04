@@ -1,0 +1,191 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-navbar-menu-item.html">
+<link rel="import" href="novicell-navbar-dropdown-item.html">
+<link rel="import" href="novicell-navbar-styles.html">
+
+<!-- Name og web component <novicell-navbar data="some json data"></novicell-navbar> -->
+<dom-module id="novicell-navbar">
+  <template>
+    <!-- Styles for novicell-navbar and includes shared styles from novicell-navbar-styles.html -->
+    <!-- Styles are encapsulated and won't affect parent elements -->
+    <style include="novicell-navbar-styles"> 
+      /* :host styles web component element <novicell-navbar></novicell-navbar> */
+      :host {
+        display: block;
+        font-family: var(--navbar-font-family);
+      }
+
+      #novicellNavbar {
+        box-sizing: border-box;
+        background-color: var(--navbar-bgcolor);
+        height: var(--navbar-height);
+        width: 100%;
+        position: var(--navbar-position);
+        top: 0;
+        left: 0;
+      }
+
+      #novicellNavbar .novicell-navbar-items {
+        height: 100%;
+        justify-content: var(--navbar-justify-content);
+        align-items: center;
+      }
+
+      #novicellNavbar .novicell-navbar-collapse-menu-outer {
+        height: 100%;
+        display: none;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      #novicellNavbar .novicell-navbar-collapse-menu {
+        margin-right: 20px;
+        cursor: pointer;
+      }
+
+      #novicellNavbar .novicell-navbar-collapse-menu > div {
+        display: block;
+        border-radius: 8px;
+        background-color: var(--navbar-collapse-menu-color);
+        width: 20px;
+        padding: 2px;
+        margin-bottom: 4px;
+      }
+
+      #novicellNavbar .novicell-navbar-collapse-menu:hover > div {
+        background-color: var(--navbar-collapse-menu-hover-color);
+      }
+
+      #novicellNavbar .novicell-navbar-collapse-menu > div:last-child {
+        margin-bottom: 0;
+      }
+      
+      @media only screen and (max-width: 768px) {
+        #novicellNavbar .novicell-navbar-items {
+          display: none;
+          flex-direction: column;
+          background-color: var(--navbar-menu-items-bgcolor);
+          position: absolute;
+          right: 0;
+          top: 60px;
+          height: auto;
+          padding: 20px;
+        }
+
+        #novicellNavbar .novicell-navbar-items-display {
+          display: inline-flex;
+        }
+
+        #novicellNavbar .novicell-navbar-collapse-menu-outer {
+          display: flex;
+        }
+      }
+
+      @media only screen and (min-width: 769px) {
+        #novicellNavbar .novicell-navbar-items {
+          display: flex;
+        }
+
+        #novicellNavbar .novicell-navbar-collapse-menu-outer {
+          display: none;
+        }
+      }
+
+    </style>
+
+    <!-- Web component HTML -->
+    <nav id="novicellNavbar" class="novicell-navbar">
+      <div id="novicellNavbarItems" class="novicell-navbar-items"></div>
+      <div class="novicell-navbar-collapse-menu-outer">
+          <div id="novicellNavbarCollapseMenu" class="novicell-navbar-collapse-menu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+      </div>
+    </nav>
+  </template>
+
+  <!-- Web component Script -->
+  <script>
+    class NovicellNavbar extends Polymer.Element { // Polymer.Element that the class extends is Polymer helper functions
+      // Polymer setup. Web Component name
+      static get is() { return "novicell-navbar"; } 
+       // Polymer setup. Custom properties on Element = <element my-custom-property="value"></element>
+       // Documentation: https://www.polymer-project.org/2.0/docs/devguide/properties
+      static get properties() {
+        return {
+          data: { // Array of JSON data used to generate menu items <novicell-navbar data="???">
+            type: Array, // property type. Data will be converted to
+            value: function() { // Default value if no property is provided on <novicell-navbar>
+              return [];
+            },
+            observer: "_dataObserver" // Simple observer. Call method if property value is changed. Function signature functionname(newValue, oldValue) {}
+          }
+        };
+      }
+
+      // Class constructor - not used in this example
+      constructor() {
+        super();
+      }
+
+      // Event fired when this element ready in DOM
+      ready() {
+          super.ready();  // Important!! Has to be at top in ready()
+
+          // Event listener for click on CollapseMenu element
+          // The syntax this$.xxxxxx = direct reference to shadow dom element Id's equals this.shadowRoot.querySelector("#xxxxxx");
+          this.$.novicellNavbarCollapseMenu.addEventListener("click", () => {
+            // Show or hide menu
+            this.$.novicellNavbarItems.classList.toggle("novicell-navbar-items-display");
+          });
+      }
+
+      // Private Method called when Data property value changes
+      // The syntax _methodname() indicates that the method is private
+      _dataObserver(newValue, oldValue) {
+        if(newValue) {
+          this._generateMenu(newValue);
+        }
+      }
+
+      // Private Method generating the menu
+      _generateMenu(data) {
+        if (data && data.length) {
+          for (let i = 0; i < data.length; i++) {
+            let menuItem = this._generateMenuItems(data[i]);
+            
+            this.$.novicellNavbarItems.appendChild(menuItem);
+          }
+          
+        }
+      }
+
+      // Private Method generating the menu items
+      _generateMenuItems(item) {
+        let menuItem = null;
+
+        if (item.type === "single") {
+          menuItem = document.createElement("novicell-navbar-menu-item");
+        } else if (item.type === "dropdown") {
+          menuItem = document.createElement("novicell-navbar-dropdown-item");
+          //We have to stringify a object when assigning it to a property
+          menuItem.setAttribute("data", JSON.stringify(item.sub));
+        }
+
+        menuItem.innerText = item.name;
+        menuItem.setAttribute("link", item.link);
+
+        // Lister for when menu items is clicked and dispatches new event with menu item data
+        menuItem.addEventListener("menu-item-click", (e) => {
+          this.dispatchEvent(new CustomEvent("navbar-menu-item-click", {detail: e.detail}));
+        });
+        return menuItem;
+      }
+    }
+
+    // Standard Web component initializing. Registration of component as Web-component
+    window.customElements.define(NovicellNavbar.is, NovicellNavbar);
+  </script>
+</dom-module>

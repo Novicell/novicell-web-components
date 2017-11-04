@@ -1,0 +1,89 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="novicell-navbar-styles.html">
+
+<!-- Name og web component <novicell-navbar-menu-item link="Link value">Menu Item Name</novicell-navbar-menu-item> -->
+<dom-module id="novicell-navbar-menu-item">
+    <template>
+        <!-- Styles for novicell-navbar-menu-item and includes shared styles from novicell-navbar-styles.html -->
+        <style include="novicell-navbar-styles">
+            /* :host styles web component element <novicell-navbar-menu-item></novicell-navbar-menu-item> */
+            :host {
+                display: inline-block;
+                height: 100%;
+                align-self: center;
+            }
+
+            .novicell-navbar-item {
+                box-sizing: border-box;
+                display: flex;
+                padding: 10px;
+                height: 100%;
+                align-items: center;
+                width: var(--navbar-menu-item-width);
+            }
+
+            .novicell-navbar-item a {
+                text-decoration: none;
+                color: var(--navbar-menu-item-color);
+            }
+
+            .novicell-navbar-item a:hover {
+                color: var(--navbar-menu-item-hover-color);
+            }
+
+            .novicell-navbar-item a.active {
+                color: var(--navbar-menu-item-active-color);
+            }
+
+            @media only screen and (max-width: 768px) {
+                :host {
+                    align-self: flex-start;
+                }
+            }
+        </style>
+
+        <!-- Web component HTML -->
+        <div id="novicellNavbarItem" class="novicell-navbar-item">
+            <a class="novicell-navbar-item-link" href$="[[link]]"><slot></slot></a>
+        </div>
+    </template>
+
+    <!-- Web component Script -->
+    <script>
+        class NovicellNavbarMenuItem extends Polymer.Element { // Polymer.Element that the class extends is Polymer helper functions
+            // Polymer setup. Web Component name
+            static get is() { return "novicell-navbar-menu-item"; } 
+            // Polymer setup. Custom properties on Element = <element my-custom-property="value"></element>
+            // Documentation: https://www.polymer-project.org/2.0/docs/devguide/properties
+            static get properties() {
+                return {
+                    link: { // Property name
+                        type: String, // Convert property to String
+                        value: "" // Property default value
+                    }
+                };
+            }
+
+            // Event fired when this element ready in DOM
+            ready() {
+                super.ready(); // Important!! Has to be at top in ready()
+
+                this._initEvents();
+            }
+
+            _initEvents() {
+                let aElem = this.$.novicellNavbarItem.querySelector(".novicell-navbar-item-link");
+                // Setting up a event listner when menu item is clicked. 
+                // Dispatches a event with menu item data to main novicell-navbar element
+                aElem.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.dispatchEvent(new CustomEvent("menu-item-click", {detail: {link: this.link}}));
+                })
+            }
+        }
+
+        // Standard Web component initializing. Registration of component as Web-component
+        window.customElements.define(NovicellNavbarMenuItem.is, NovicellNavbarMenuItem);
+    </script>
+</dom-module>

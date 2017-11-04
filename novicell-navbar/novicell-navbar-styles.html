@@ -1,0 +1,35 @@
+<!-- Shared style file used in all navbar components -->
+<!-- In this example we uses it for CSS variable declaration -->
+<dom-module id="novicell-navbar-styles">
+  <template>
+    <style>
+        :host {
+          --default-font-family: "Roboto", "Arial", "Helvetica Sans";
+          --default-bgcolor: #403075; 
+          --default-color: #fff;
+          --default-hover-color: #635394;
+
+          --navbar-font-family: var(--default-font-family);
+          --navbar-position: relative;
+          --navbar-justify-content: flex-start;
+          --navbar-bgcolor: var(--default-bgcolor);
+          --navbar-height: 60px;
+          
+          --navbar-menu-items-bgcolor: var(--default-bgcolor);
+
+          --navbar-collapse-menu-color: var(--default-color);
+          --navbar-collapse-menu-hover-color: var(--default-hover-color);
+          
+          --navbar-menu-item-color: var(--default-color);
+          --navbar-menu-item-hover-color: var(--default-hover-color);
+          --navbar-menu-item-active-color: #8D81B3;
+          --navbar-menu-item-width: auto;
+          
+          --navbar-dropdown-icon-color: var(--navbar-menu-item-color);
+          --navbar-dropdown-bgcolor: var(--default-bgcolor); 
+          --navbar-dropdown-color: var(--default-color);
+          --navbar-dropdown-hover-color: var(--default-hover-color);
+        }
+    </style>
+  </template>
+</dom-module>
